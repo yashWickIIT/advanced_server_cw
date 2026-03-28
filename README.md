@@ -138,11 +138,6 @@ Starts the server normally.
 | `DB_NAME` | Database name | - |
 | `JWT_SECRET` | JWT secret key | - |
 
-## Testing
-
-```bash
-npm test
-```
 
 ## API Documentation
 

@@ -97,6 +97,60 @@ exports.saveProfile = async (req, res) => {
       }
     }
 
+    if (req.body.degrees) {
+      const degrees = JSON.parse(req.body.degrees);
+      await db.query("DELETE FROM degrees WHERE user_id = ?", [userId]);
+      for (let d of degrees) {
+        await db.query(
+          "INSERT INTO degrees (user_id, degree_name, institution, degree_url, completion_date) VALUES (?, ?, ?, ?, ?)",
+          [
+            userId,
+            d.degree_name,
+            d.institution,
+            d.degree_url,
+            d.completion_date,
+          ],
+        );
+      }
+    }
+
+    if (req.body.licences) {
+      const licences = JSON.parse(req.body.licences);
+      await db.query("DELETE FROM licences WHERE user_id = ?", [userId]);
+      for (let l of licences) {
+        await db.query(
+          "INSERT INTO licences (user_id, licence_name, licence_url, completion_date) VALUES (?, ?, ?, ?)",
+          [userId, l.licence_name, l.licence_url, l.completion_date],
+        );
+      }
+    }
+
+    if (req.body.courses) {
+      const courses = JSON.parse(req.body.courses);
+      await db.query("DELETE FROM professional_courses WHERE user_id = ?", [
+        userId,
+      ]);
+      for (let c of courses) {
+        await db.query(
+          "INSERT INTO professional_courses (user_id, course_name, course_url, completion_date) VALUES (?, ?, ?, ?)",
+          [userId, c.course_name, c.course_url, c.completion_date],
+        );
+      }
+    }
+
+    if (req.body.employment) {
+      const employment = JSON.parse(req.body.employment);
+      await db.query("DELETE FROM employment_history WHERE user_id = ?", [
+        userId,
+      ]);
+      for (let e of employment) {
+        await db.query(
+          "INSERT INTO employment_history (user_id, company_name, role_title, start_date, end_date) VALUES (?, ?, ?, ?, ?)",
+          [userId, e.company_name, e.role_title, e.start_date, e.end_date],
+        );
+      }
+    }
+
     res.status(200).json({ message: "Profile and image saved successfully!" });
   } catch (error) {
     console.error(error);

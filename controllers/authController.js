@@ -209,3 +209,10 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ error: "Server error during password reset." });
   }
 };
+
+exports.logout = (req, res) => {
+  res.status(200).json({
+    message:
+      "Successfully logged out. Please remove the token from your client.",
+  });
+};
