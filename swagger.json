@@ -100,6 +100,20 @@
         }
       }
     },
+    "/api/auth/logout": {
+      "post": {
+        "summary": "Log out an alumni user",
+        "description": "Instructs the client application to discard the JWT token. (Stateless API)",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged out message"
+          }
+        }
+      }
+    },
     "/api/profile": {
       "get": {
         "summary": "Get the logged-in user's profile",
@@ -157,6 +171,30 @@
         "responses": {
           "200": {
             "description": "Profile saved successfully"
+          }
+        }
+      }
+    },
+    "/api/bids/my-bids": {
+      "get": {
+        "summary": "View your personal bidding history and current bid status",
+        "tags": [
+          "Bidding System"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of the user's past and active bids"
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid token"
+          },
+          "500": {
+            "description": "Server error fetching bid history"
           }
         }
       }
