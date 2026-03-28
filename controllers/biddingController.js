@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const dateUtils = require("../utils/dateUtils");
 
 exports.placeBid = async (req, res) => {
   try {
@@ -28,10 +29,13 @@ exports.placeBid = async (req, res) => {
       });
     }
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const targetDate = tomorrow.toISOString().split("T")[0];
-
+    // const tomorrow = new Date();
+    // tomorrow.setDate(tomorrow.getDate() + 1);
+    // const targetDate = tomorrow.toISOString().split("T")[0];
+    // // 1. Calculate tomorrow's date strictly in UK local time
+    // const targetDate = dayjs().tz().add(1, "day").format("YYYY-MM-DD");
+    // 1. Calculate tomorrow's date using our clean utility
+    const targetDate = dateUtils.getTomorrow();
     const [existingBids] = await db.query(
       "SELECT * FROM bids WHERE user_id = ? AND target_date = ?",
       [userId, targetDate],
@@ -66,8 +70,10 @@ exports.placeBid = async (req, res) => {
 
 exports.triggerWinnerSelection = async (req, res) => {
   try {
-    const today = new Date().toISOString().split("T")[0];
-
+    // const today = new Date().toISOString().split("T")[0];
+    // const today = dayjs().tz().format("YYYY-MM-DD");
+    // Get today's date using our clean utility
+    const today = dateUtils.getToday();
     const [bids] = await db.query(
       "SELECT id FROM bids WHERE target_date = ? ORDER BY bid_amount DESC LIMIT 1",
       [today],
@@ -81,17 +87,13 @@ exports.triggerWinnerSelection = async (req, res) => {
         'UPDATE bids SET status = "lost" WHERE target_date = ? AND id != ?',
         [today, bids[0].id],
       );
-      res
-        .status(200)
-        .json({
-          message: "Manual trigger successful! Winner selected for today.",
-        });
+      res.status(200).json({
+        message: "Manual trigger successful! Winner selected for today.",
+      });
     } else {
-      res
-        .status(200)
-        .json({
-          message: "Manual trigger successful, but no bids found for today.",
-        });
+      res.status(200).json({
+        message: "Manual trigger successful, but no bids found for today.",
+      });
     }
   } catch (error) {
     console.error(error);
@@ -101,8 +103,10 @@ exports.triggerWinnerSelection = async (req, res) => {
 
 exports.getAlumnusOfDay = async (req, res) => {
   try {
-    const today = new Date().toISOString().split("T")[0];
-
+    // const today = new Date().toISOString().split("T")[0];
+    // const today = dayjs().tz().format("YYYY-MM-DD");
+    // Get today's date using our clean utility
+    const today = dateUtils.getToday();
     const [winners] = await db.query(
       `
             SELECT p.first_name, p.last_name, p.bio, p.linkedin_url, p.profile_image_url 
@@ -132,21 +136,21 @@ exports.getAlumnusOfDay = async (req, res) => {
 };
 
 exports.getMyBids = async (req, res) => {
-    try {
-        const userId = req.user.userId;
+  try {
+    const userId = req.user.userId;
 
-        const [bids] = await db.query(
-            'SELECT id, bid_amount, target_date, status, created_at FROM bids WHERE user_id = ? ORDER BY target_date DESC', 
-            [userId]
-        );
+    const [bids] = await db.query(
+      "SELECT id, bid_amount, target_date, status, created_at FROM bids WHERE user_id = ? ORDER BY target_date DESC",
+      [userId],
+    );
 
-        res.status(200).json({ 
-            message: "Your bidding history", 
-            total_bids: bids.length,
-            bids: bids 
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error fetching bid history.' });
-    }
+    res.status(200).json({
+      message: "Your bidding history",
+      total_bids: bids.length,
+      bids: bids,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error fetching bid history." });
+  }
 };
