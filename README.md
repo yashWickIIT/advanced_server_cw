@@ -158,10 +158,3 @@ http://localhost:3000/api-docs
 3. Push to the branch (`git push origin feature/feature-name`)
 4. Open a Pull Request
 
-## License
-
-ISC
-
-## Support
-
-For support, email support@example.com or create an issue in the repository.
