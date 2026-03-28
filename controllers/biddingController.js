@@ -130,3 +130,23 @@ exports.getAlumnusOfDay = async (req, res) => {
       .json({ error: "Server error fetching Alumnus of the Day." });
   }
 };
+
+exports.getMyBids = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        const [bids] = await db.query(
+            'SELECT id, bid_amount, target_date, status, created_at FROM bids WHERE user_id = ? ORDER BY target_date DESC', 
+            [userId]
+        );
+
+        res.status(200).json({ 
+            message: "Your bidding history", 
+            total_bids: bids.length,
+            bids: bids 
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error fetching bid history.' });
+    }
+};

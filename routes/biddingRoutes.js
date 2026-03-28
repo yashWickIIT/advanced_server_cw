@@ -14,4 +14,6 @@ router.get(
   biddingController.getAlumnusOfDay,
 );
 
+router.get("/my-bids", authMiddleware, biddingController.getMyBids);
+
 module.exports = router;

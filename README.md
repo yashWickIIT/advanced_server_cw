@@ -8,7 +8,7 @@ A secure, feature-rich Express.js backend server with authentication, bidding sy
 - **API Key Management** - Generate and manage API keys for secure access
 - **Bidding System** - Complete bidding functionality with winner selection
 - **User Profiles** - User profile management and updates
-- **Security** - XSS protection, rate limiting, CORS, and Helmet for secure HTTP headers
+- **Security** - XSS protection, rate limiting, CORS, and use of Helmet
 - **Database** - MySQL integration using mysql2
 - **API Documentation** - Swagger/OpenAPI documentation
 - **Job Scheduling** - Automated winner selection using cron jobs
@@ -123,7 +123,6 @@ Starts the server normally.
 - **XSS Protection**: All user inputs are sanitized
 - **Rate Limiting**: 100 requests per 15 minutes per IP
 - **CORS**: Configured for cross-origin requests
-- **Helmet**: Secure HTTP headers
 - **Password Hashing**: bcrypt with salt rounds
 - **JWT Tokens**: Secure token-based authentication
 
